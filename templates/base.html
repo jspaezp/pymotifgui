@@ -1,0 +1,389 @@
+<!doctype html>
+
+<head>
+  <title>Sowcasing nMer Clustering</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <style>
+    ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      list-style-type: none;
+    }
+
+    li>* {
+      padding: 1em;
+    }
+
+    li.active>a {
+      color: #5e5e5e;
+      border-bottom: 2px solid #4a4a4a;
+    }
+
+    form {
+      display: flex;
+    }
+
+    label>input {
+      width: 3em;
+    }
+
+    form>* {
+      padding-right: 1em;
+    }
+
+    #result {
+      font-weight: bold;
+    }
+
+    .links line {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+  </style>
+  <script type="text/javascript">
+
+    $(function() { //shorthand document.ready function
+      $('#networkForm').on('submit', function(e) { //use on if jQuery 1.7+
+        e.preventDefault(); //prevent form from submitting
+        var data = $("#networkForm :input").serializeArray();
+        var formURL = $("#networkForm").attr("action");
+        console.log(data); //use the console for debugging, F12 in Chrome, not alerts
+        console.log(formURL); //use the console for debugging, F12 in Chrome, not alerts
+        $.ajax({
+          url: formURL,
+          type: "POST",
+          crossDomain: true,
+          data: data,
+          success: function(data, textStatus, jqXHR) {
+            //data: return data from server
+            alert('it worked');
+            console.log(data);
+            data = JSON.stringify(data)
+            document.getElementById("mygraph").innerHTML = data;
+            alert(data + "," + this.url);
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            //if fails
+            alert('it didnt work');
+          }
+        });
+        e.preventDefault(); //STOP default action
+      });
+    });
+  </script>
+
+  <script id="mygraph" type="application/json">
+    {
+      "nodes": [{
+          "Sequence": "DSSASPEVVSDLPPSSPKGSPDRHDPSTSSP",
+          "group": 1,
+          "id": 0
+        },
+        {
+          "Sequence": "VREQAVWALGNVAGDSPKCRDLVLSYGAMTP",
+          "group": 1,
+          "id": 1
+        },
+        {
+          "Sequence": "LTSPIPRASVITNQNSPLSSRATRRTSISSG",
+          "group": 1,
+          "id": 2
+        },
+        {
+          "Sequence": "VTPCKGSGDRSLGLTSPIPRASVITNQNSPL",
+          "group": 1,
+          "id": 3
+        },
+        {
+          "Sequence": "AIKASSLSKEGLLFGSPKLSGGSSLYGKLQQ",
+          "group": 1,
+          "id": 4
+        },
+        {
+          "Sequence": "STVSDPRPSPPGSPADHPSDSVLSSSDPSKE",
+          "group": 2,
+          "id": 5
+        },
+        {
+          "Sequence": "AGVRWDSLPCVTGMANVGDKAALSYERLQPV",
+          "group": 2,
+          "id": 6
+        },
+        {
+          "Sequence": "RNSPTLAGNQTIPLRVSSSIPIRTTSSSSRA",
+          "group": 2,
+          "id": 7
+        },
+        {
+          "Sequence": "RIPRQALCVGNSTTGLDSPSGPVNIPSLKTS",
+          "group": 2,
+          "id": 8
+        },
+        {
+          "Sequence": "GKSSAGLYLGKIALSGFESSLSPKSQLLQGK",
+          "group": 2,
+          "id": 9
+        },
+        {
+          "Sequence": "MGDLSKELGILSRSEITSKNSKFKPVDPAGF",
+          "group": 2,
+          "id": 10
+        },
+        {
+          "Sequence": "EEKQSGSSTKEEDGDSSTELPAPSERGVAQS",
+          "group": 2,
+          "id": 11
+        }
+      ],
+      "links": [{
+          "source": 0,
+          "target": 1
+        },
+        {
+          "source": 1,
+          "target": 2
+        },
+        {
+          "source": 2,
+          "target": 0
+        },
+        {
+          "source": 4,
+          "target": 5
+        },
+        {
+          "source": 5,
+          "target": 6
+        },
+        {
+          "source": 6,
+          "target": 7
+        },
+        {
+          "source": 8,
+          "target": 9
+        },
+        {
+          "source": 9,
+          "target": 10
+        }
+      ]
+    }
+  </script>
+
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="mx-auto">
+        <h1>Sequence Clustering</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4">
+        <form action="getNetwork" method="post" id="networkForm">
+          <div class="form-group col">
+            <div class="form-row">
+              <div class="form-group">
+                <div class="input-group-prepend">
+                  <label for="sequences">
+                    Sequences
+                  </label>
+                  <textarea class="form-control" aria-label="With textarea" name="foregroundSequences" id="foreSequences"></textarea>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group-prepend">
+                  <label for="background">
+                    Background Sequences
+                  </label>
+                  <hr>
+                  <p><small>Will be ignored if decoys are added</small></p>
+                  <textarea class="form-control" aria-label="With textarea" name="backgroundSequences" id="backSequences"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="NmerSize">Number of Neighbors</label>
+                <input type="text" class="form-control" name="NN" placeholder="Number of Neighbors" id="nearestneighbors">
+              </div>
+              <div class="form-group">
+                <label for="NmerSize">Nmer Size</label>
+                <input type="text" class="form-control" name="NmerSize" placeholder="Number of Nmers" id="nmersize">
+              </div>
+              <div class="form-group">
+                <label for="NmerSize">Alphabet</label>
+                <input type="text" class="form-control" name="alphabet" placeholder="Alphabet" id="alphabet">
+              </div>
+
+              <div class="form-group">
+                <label for="decoys">Add Decoys</label>
+                <select class="form-control" name="decoys" id="decoys">
+                  <option value='True'>Yes (please)</option>
+                  <option value='False'>No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="ndecoys">Number of decoys</label>
+                <p>In terms of the foreground, therefore 1 will make a background the same size as the foreground.</p>
+                <input type="number" class="form-control" name="ndecoys" id="ndecoys" placeholder=1>
+              </div>
+            </div>
+            <hr>
+            <div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </form>
+        <div id="placeholder" name="placeholder"><p>hello</p></div>
+      </div>
+      <div class="col-6">
+        <svg width="450" height="450"></svg>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="//d3js.org/d3.v4.min.js"></script>
+  <script>
+    var svg = d3.select("svg"),
+      width = +svg.attr("width"),
+      height = +svg.attr("height");
+
+    var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    var simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(function(d) {
+        return d.id;
+      }))
+      .force("charge", d3.forceManyBody())
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+
+    var json = JSON.parse(document.getElementById('mygraph').innerHTML);
+
+    var link = svg.append("g")
+      .attr("class", "links")
+      .selectAll("line")
+      .data(json.links)
+      .enter().append("line")
+      .attr("stroke-width", function(d) {
+        return Math.sqrt(4);
+      });
+    // .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+    var node = svg.append("g")
+      .attr("class", "nodes")
+      .selectAll("circle")
+      .data(json.nodes)
+      .enter().append("circle")
+      .attr("r", 5)
+      .on("click", click)
+      .on("dblclick", dblclick)
+      .attr("fill", function(d) {
+        return color(d.group);
+      })
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    simulation
+      .nodes(json.nodes)
+      .on("tick", ticked);
+
+    node.append("title")
+      .text(function(d) {
+        return d.Sequence;
+      });
+
+    simulation.force("link")
+      .links(json.links);
+
+
+    function ticked() {
+      link.attr("x1", function(d) {
+          return d.source.x;
+        }).attr("y1", function(d) {
+          return d.source.y;
+        }).attr("x2", function(d) {
+          return d.target.x;
+        }).attr("y2", function(d) {
+          return d.target.y;
+        });
+
+      node.attr("cx", function(d) {
+          return d.x;
+        }).attr("cy", function(d) {
+          return d.y;
+        });
+    }
+
+
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    // action to take on mouse click
+    function click() {
+      d3.select(this).select("text").transition()
+        .duration(750)
+        .attr("x", 22)
+        .style("fill", "steelblue")
+        .style("stroke", "lightsteelblue")
+        .style("stroke-width", ".5px")
+        .style("font", "20px sans-serif");
+      d3.select(this).select("circle").transition()
+        .duration(750)
+        .attr("r", 16)
+        .style("fill", "lightsteelblue");
+    }
+
+    // action to take on mouse double click
+    function dblclick() {
+      d3.select(this).select("circle").transition()
+        .duration(750)
+        .attr("r", 6)
+        .style("fill", "#ccc");
+      d3.select(this).select("text").transition()
+        .duration(750)
+        .attr("x", 12)
+        .style("stroke", "none")
+        .style("fill", "black")
+        .style("stroke", "none")
+        .style("font", "10px sans-serif");
+    }
+  </script>
+
+  <script type="text/javascript">
+    document.getElementById('foreSequences').value = 'PEPTIDE\nTIDALES\nPRTEINS\nPRTIDES';
+    document.getElementById('nearestneighbors').value = 2;
+    document.getElementById('nmersize').value = 3;
+    document.getElementById('alphabet').value = 'ACDEFGHIKLMNPQRSTVWY';
+  </script>
+</body>
