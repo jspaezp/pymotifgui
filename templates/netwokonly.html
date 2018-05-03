@@ -1,0 +1,198 @@
+
+<!doctype html>
+
+<head>
+  <title>Sowcasing nMer Clustering</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <style>
+    ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      list-style-type: none;
+    }
+
+    li>* {
+      padding: 1em;
+    }
+
+    li.active>a {
+      color: #5e5e5e;
+      border-bottom: 2px solid #4a4a4a;
+    }
+
+    form {
+      display: flex;
+    }
+
+    label>input {
+      width: 3em;
+    }
+
+    form>* {
+      padding-right: 1em;
+    }
+
+    #result {
+      font-weight: bold;
+    }
+
+    .links line {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+  </style>
+  <script id="mygraph" type="application/json">
+    {{ jsonobj|tojson }}
+  </script>
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="mx-auto">
+        <h1>Sequence Clustering</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="mx-auto">
+        <svg width="1600" height="900"></svg>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="//d3js.org/d3.v4.min.js"></script>
+  <script>
+    var svg = d3.select("svg"),
+      width = +svg.attr("width"),
+      height = +svg.attr("height");
+
+    var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    var simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(function(d) {
+        return d.id;
+      }))
+      .force("charge", d3.forceManyBody())
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+
+    var json = JSON.parse(document.getElementById('mygraph').innerHTML);
+
+    var link = svg.append("g")
+      .attr("class", "links")
+      .selectAll("line")
+      .data(json.links)
+      .enter().append("line")
+      .attr("stroke-width", function(d) {
+        return Math.sqrt(20);
+      });
+    // .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+    var node = svg.append("g")
+      .attr("class", "nodes")
+      .selectAll("circle")
+      .data(json.nodes)
+      .enter().append("circle")
+      .attr("r", 5)
+      .on("click", click)
+      .on("dblclick", dblclick)
+      .attr("fill", function(d) {
+        return color(d.group);
+      })
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    simulation
+      .nodes(json.nodes)
+      .on("tick", ticked);
+
+    node.append("title")
+      .text(function(d) {
+        return d.Sequence;
+      });
+
+    simulation.force("link")
+      .links(json.links);
+
+
+    function ticked() {
+      link.attr("x1", function(d) {
+          return d.source.x;
+        }).attr("y1", function(d) {
+          return d.source.y;
+        }).attr("x2", function(d) {
+          return d.target.x;
+        }).attr("y2", function(d) {
+          return d.target.y;
+        });
+
+      node.attr("cx", function(d) {
+          return d.x;
+        }).attr("cy", function(d) {
+          return d.y;
+        });
+    }
+
+
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    // action to take on mouse click
+    function click() {
+      d3.select(this).select("text").transition()
+        .duration(750)
+        .attr("x", 22)
+        .style("fill", "steelblue")
+        .style("stroke", "lightsteelblue")
+        .style("stroke-width", ".5px")
+        .style("font", "20px sans-serif");
+      d3.select(this).select("circle").transition()
+        .duration(750)
+        .attr("r", 16)
+        .style("fill", "lightsteelblue");
+    }
+
+    // action to take on mouse double click
+    function dblclick() {
+      d3.select(this).select("circle").transition()
+        .duration(750)
+        .attr("r", 6)
+        .style("fill", "#ccc");
+      d3.select(this).select("text").transition()
+        .duration(750)
+        .attr("x", 12)
+        .style("stroke", "none")
+        .style("fill", "black")
+        .style("stroke", "none")
+        .style("font", "10px sans-serif");
+    }
+  </script>
+
+</body>

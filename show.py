@@ -47,7 +47,6 @@ def test_parseSequences():
     parseSequences("")
 
 
-
 @app.route('/getNetwork', methods=['POST'])
 def getNetwork():
     fg = parseSequences(request.form.get('foregroundSequences'))
@@ -57,20 +56,19 @@ def getNetwork():
     nd = int(request.form.get('NmerSize'))
     ad = request.form.get('decoys')
 
-    print(fg, bg, nn, ns, nd, ad)
-    print([type(x) for x in [fg, bg, nn, ns, nd, ad]])
-    return jsonify(
-        clus_windows(fg_sequence=fg, bg_sequences=bg,
-                     nmer_size=ns, k=nn,
-                     ndecoys=nd, adddecoys=ad))
-    #return jsonify('got it')
+    jsonobj = clus_windows(
+        fg_sequence=fg, bg_sequences=bg,
+        nmer_size=ns, k=nn,
+        ndecoys=nd, adddecoys=ad)
+    return render_template('netwokonly.html', jsonobj=jsonobj)
+    # return jsonify('got it')
 
 
 def clus_windows(fg_sequence, bg_sequences, nmer_size, k, ndecoys, adddecoys):
     sequences = []
     group = []
 
-    fg_sequence.extend(fg_sequence)
+    sequences.extend(fg_sequence)
     group.extend(['fg']*len(fg_sequence))
 
     if adddecoys == 'True':
@@ -84,10 +82,7 @@ def clus_windows(fg_sequence, bg_sequences, nmer_size, k, ndecoys, adddecoys):
         sequences.extend(bg_sequences)
         group.extend(['bg']*len(fg_sequence))
 
-    print(sequences)
-
     foo = nmer_knn(sequences, nmer_size=nmer_size, k=k)
-
     G = knn_to_graph(foo, sequences)
     G.add_nodes_from([x for x, y in enumerate(group) if y == 'fg'], group=1)
     G.add_nodes_from([x for x, y in enumerate(group) if y == 'decoys'], group=2)

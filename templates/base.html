@@ -48,37 +48,6 @@
       stroke-opacity: 0.6;
     }
   </style>
-  <script type="text/javascript">
-
-    $(function() { //shorthand document.ready function
-      $('#networkForm').on('submit', function(e) { //use on if jQuery 1.7+
-        e.preventDefault(); //prevent form from submitting
-        var data = $("#networkForm :input").serializeArray();
-        var formURL = $("#networkForm").attr("action");
-        console.log(data); //use the console for debugging, F12 in Chrome, not alerts
-        console.log(formURL); //use the console for debugging, F12 in Chrome, not alerts
-        $.ajax({
-          url: formURL,
-          type: "POST",
-          crossDomain: true,
-          data: data,
-          success: function(data, textStatus, jqXHR) {
-            //data: return data from server
-            alert('it worked');
-            console.log(data);
-            data = JSON.stringify(data)
-            document.getElementById("mygraph").innerHTML = data;
-            alert(data + "," + this.url);
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            //if fails
-            alert('it didnt work');
-          }
-        });
-        e.preventDefault(); //STOP default action
-      });
-    });
-  </script>
 
   <script id="mygraph" type="application/json">
     {
@@ -193,8 +162,8 @@
     <div class="row">
       <div class="col-4">
         <form action="getNetwork" method="post" id="networkForm">
-          <div class="form-group col">
-            <div class="form-row">
+          <div class="form-group">
+            <div class="form-col">
               <div class="form-group">
                 <div class="input-group-prepend">
                   <label for="sequences">
