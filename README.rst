@@ -30,5 +30,9 @@ TODO
 ====
 
 - Curently there is a bug where newlines make the query crash
+- Add a couple of screenshots of the working gui
+- Make a nicer layout for the initial website
+- Add the posibility to reload in place the network (instead of generating a new webpage)
+- Add an option to upload a file instead of pasting the text in a box
 
 
